@@ -1,13 +1,18 @@
 ﻿// Instantiate the recorder, and start it
 using PacketRecording;
 using System.Net;
+using System.Net.Sockets;
 
-var recorder = new UdpPacketRecorder(new IPEndPoint(IPAddress.Loopback, 20777), @"D:\Temp\test_dump");
+var udpClient = new UdpClient(new IPEndPoint(IPAddress.Loopback, 20777));
+var packetReceiver = new UdpClientReceiver(udpClient);
+
+var streamFactory = new FileStreamFactory(compressionEnabled: false);
+var recorder = new UdpPacketRecorder(packetReceiver, streamFactory);
+
 var cts = new CancellationTokenSource();
-
 await Task.Run(async () =>
 {
-    await recorder.StartRecording(compressionEnabled: false, cts.Token);
+    await recorder.StartRecording(@"D:\Temp\test_dump", cts.Token);
 });
 
 Console.WriteLine("Press Enter to stop recording...");
