@@ -12,7 +12,7 @@ namespace F1Packets
             return MemoryMarshal.Read<T>(bytes.AsSpan(0, Marshal.SizeOf<T>()));
         }
 
-        public static string GetNameFromBuffer(NameBuffer nameBuffer)
+        public static string? GetNameFromBuffer(NameBuffer nameBuffer)
         {
             var name = new StringBuilder();
             foreach (var c in nameBuffer)
@@ -20,6 +20,7 @@ namespace F1Packets
                 if (c == 0) break; // Stop at null character
                 name.Append((char)c);
             }
+            if (name.Length == 0) return null;
             return name.ToString();
         }
     }
