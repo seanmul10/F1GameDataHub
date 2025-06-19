@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketReplaying", "PacketRe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketRecording.UnitTests", "PacketRecording.UnitTests\PacketRecording.UnitTests.csproj", "{BAEDB69C-59A7-488A-AC07-E29CE115EF4C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F1Packets", "F1Packets\F1Packets.csproj", "{CCF45D53-73FC-462C-BCF8-8FB4B68E2A03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F1Packets.UnitTests", "F1Packets.UnitTests\F1Packets.UnitTests.csproj", "{B570AEF7-BE88-480A-8811-36A827FAA710}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{BAEDB69C-59A7-488A-AC07-E29CE115EF4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAEDB69C-59A7-488A-AC07-E29CE115EF4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BAEDB69C-59A7-488A-AC07-E29CE115EF4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCF45D53-73FC-462C-BCF8-8FB4B68E2A03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCF45D53-73FC-462C-BCF8-8FB4B68E2A03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCF45D53-73FC-462C-BCF8-8FB4B68E2A03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCF45D53-73FC-462C-BCF8-8FB4B68E2A03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B570AEF7-BE88-480A-8811-36A827FAA710}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B570AEF7-BE88-480A-8811-36A827FAA710}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B570AEF7-BE88-480A-8811-36A827FAA710}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B570AEF7-BE88-480A-8811-36A827FAA710}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

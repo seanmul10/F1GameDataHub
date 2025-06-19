@@ -3,7 +3,7 @@ using PacketRecording;
 using System.Net;
 using System.Net.Sockets;
 
-var udpClient = new UdpClient(new IPEndPoint(IPAddress.Loopback, 20777));
+var udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, 20777));
 var packetReceiver = new UdpClientReceiver(udpClient);
 
 var streamFactory = new FileStreamFactory(compressionEnabled: false);
