@@ -1,0 +1,12 @@
+{
+  "stryker-config": {
+    "mutate": [
+      "**/*.cs"
+    ],
+    "ignore-methods": [
+      "Console.WriteLine"
+    ],
+    "reporters": [ "html", "cleartext" ],
+    "verbosity": "info"
+  }
+}
