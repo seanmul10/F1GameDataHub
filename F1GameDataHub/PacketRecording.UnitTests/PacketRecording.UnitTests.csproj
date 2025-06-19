@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\F1Packets\F1Packets.csproj" />
     <ProjectReference Include="..\PacketRecording\PacketRecording.csproj" />
   </ItemGroup>
 
