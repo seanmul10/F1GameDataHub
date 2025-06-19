@@ -1,7 +1,10 @@
 ﻿using PacketReplaying;
 using System.Net;
 
-string compressedFilePath = @"D:\Temp\test_dump";
+string compressedFilePath = @"D:\Temp\div_2_australia.gz";
+
+Console.WriteLine("Press Enter to start replaying...");
+Console.ReadLine();
 
 var replayer = new UdpPacketReplayer(IPAddress.Loopback, 20777, compressedFilePath);
 var cts = new CancellationTokenSource();

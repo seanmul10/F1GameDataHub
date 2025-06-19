@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using F1.Common;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
@@ -58,13 +59,14 @@ namespace PacketReplaying
                     var elapsedTime = stopwatch.Elapsed;
                     var latency = packetOffset - elapsedTime;
                     previousLatency = latency.TotalMilliseconds;
-                    Console.WriteLine($"{timestamp}\t Latency: {latency.TotalMilliseconds}ms");
 
                     // Read and skip the UDP buffer (binary data)
                     int udpBufferLength = reader.ReadInt32(); // Read length of UDP buffer
                     var udpBuffer = reader.ReadBytes(udpBufferLength);
 
                     await SendPacket(udpBuffer, cancellationToken);
+
+                    Console.WriteLine($"{timestamp}\t Latency: {latency.TotalMilliseconds}ms\t Packet: {(F1PacketId)udpBuffer[6]}");
                 }
                 catch (EndOfStreamException)
                 {
