@@ -186,14 +186,14 @@ namespace F1Packets.F125
         public byte GridPosition => _gridPosition;
 
         /// <summary>
-        /// The current status of the driver. See <see cref="DriverStatus"/> for possible values.
+        /// The current status of the driver. See <see cref="F125.DriverStatus"/> for possible values.
         /// </summary>
         public Sector DriverStatus => (Sector)_driverStatus;
 
         /// <summary>
-        /// The result status of the car. See <see cref="ResultStatus"/> for possible values.
+        /// The result status of the car. See <see cref="F125.ResultStatus"/> for possible values.
         /// </summary>
-        public byte ResultStatus => _resultStatus;
+        public ResultStatus ResultStatus => (ResultStatus)_resultStatus;
 
         /// <summary>
         /// Whether the pit lane timer is active currently.

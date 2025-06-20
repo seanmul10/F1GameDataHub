@@ -122,7 +122,7 @@ namespace F1Packets.F125
         public const string CollisionEventCode = "COLL";
     }
 
-    public enum RetirementReason
+    public enum ResultReason
     {
         Invalid = 0,
         Retired = 1,
@@ -235,9 +235,9 @@ namespace F1Packets.F125
         public byte VehicleIdx => _vehicleIdx;
 
         /// <summary>
-        /// The reason for retirement. See <see cref="RetirementReason"/> for possible values.
+        /// The reason for retirement. See <see cref="ResultReason"/> for possible values.
         /// </summary>
-        public RetirementReason Reason => (RetirementReason)_reason;
+        public ResultReason Reason => (ResultReason)_reason;
 
         /// <inheritdoc/>
         public string EventStringCode => EventStringCodes.RetirementEventCode;
