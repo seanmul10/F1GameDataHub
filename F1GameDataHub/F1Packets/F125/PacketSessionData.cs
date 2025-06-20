@@ -435,7 +435,7 @@ namespace F1Packets.F125
         private readonly byte _numSafetyCarPeriods;
         private readonly byte _numVirtualSafetyCarPeriods;
         private readonly byte _numRedFlagPeriods;
-        
+        private readonly SessionSettings _sessionSettings;
         private readonly byte _numSessionsInWeekend;
         private readonly WeekendStructureBuffer _weekendStructure;
         private readonly float _sector2LapDistanceStart;
@@ -652,6 +652,11 @@ namespace F1Packets.F125
         /// The number of red flags there have been in the session.
         /// </summary>
         public byte NumRedFlagPeriods => _numRedFlagPeriods;
+
+        /// <summary>
+        /// The global settings that modify the session.
+        /// </summary>
+        public SessionSettings SessionSettings => _sessionSettings;
 
         /// <summary>
         /// The number of individual sessions in the weekend.
