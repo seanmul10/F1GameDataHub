@@ -21,14 +21,29 @@ namespace F1Packets.F125
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct PacketLapPositionsData
+    public readonly struct PacketLapPositionsData : IF1Packet
     {
-        public PacketHeader Header;
+        private readonly PacketHeader _header;
+        private readonly byte _numLaps;
+        private readonly byte _lapStart;
+        private readonly PositionsInLapBuffer _positionForVehicleIdx;
 
-        public byte NumLaps;
-        public byte LapStart;
+        /// <inheritdoc/>
+        public PacketHeader Header => _header;
 
-        // Fixed size 2D array [50][22]
-        public PositionsInLapBuffer PositionForVehicleIdx;
+        /// <summary>
+        /// The number of laps in the data, up to a maximum of <see cref="LapPositionsPacketConstants.MaxNumLaps"/>.
+        /// </summary>
+        public byte NumLaps => _numLaps;
+
+        /// <summary>
+        /// The index of the lap where the data starts.
+        /// </summary>
+        public byte LapStart => _lapStart;
+
+        /// <summary>
+        /// A 2-dimensional array representing the positions of each vehicle in each lap.
+        /// </summary>
+        public PositionsInLapBuffer PositionForVehicleIdx => _positionForVehicleIdx;
     }
 }
