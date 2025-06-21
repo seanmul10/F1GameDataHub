@@ -135,7 +135,7 @@ namespace F1Packets.F125
         /// <summary>
         /// The platform this player is playing on.
         /// </summary>
-        public readonly Platform? Platform => (Platform)_platform;
+        public readonly Platform? Platform => _platform == 255 ? null : (Platform)_platform;
 
         /// <summary>
         /// The number of colours available to use for the livery of this car.

@@ -37,7 +37,7 @@ namespace F1Packets.F125
         /// <summary>
         /// The platform this player is playing on.
         /// </summary>
-        public Platform? Platform => (Platform)_platform;
+        public Platform? Platform => _platform == 255 ? null : (Platform)_platform;
 
         /// <summary>
         /// The name of the driver. <c>null</c> if the name of the driver is not available,
