@@ -111,7 +111,7 @@ namespace F1Packets.F125
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public readonly struct PacketFinalClassificationData
+    public readonly struct PacketFinalClassificationData : IF1Packet
     {
         private readonly PacketHeader _header;
         private readonly byte _numCars;

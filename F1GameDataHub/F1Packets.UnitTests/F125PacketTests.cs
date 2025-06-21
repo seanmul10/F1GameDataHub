@@ -122,7 +122,9 @@ namespace F1Packets.UnitTests
         {
             var expectedSize = Marshal.SizeOf<T>();
             Assert.AreEqual(expectedSize, bytes.Length, $"Packet size does not match expected size for {typeof(T).Name}.");
-            return Utils.ReadFromBytes<T>(bytes);
+            var packet = Utils.ReadFromBytes<T>(bytes);
+            Assert.IsInstanceOfType<IF1Packet>(packet, $"Packet is not of type {typeof(T).Name}.");
+            return packet;
         }
     }
 }
