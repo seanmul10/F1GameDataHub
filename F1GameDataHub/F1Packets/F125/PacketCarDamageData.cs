@@ -6,10 +6,10 @@ namespace F1Packets.F125
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CarDamageData
     {
-        private TyreDataBuffer<float> _tyresWear;
-        private TyreDataBuffer<byte> _tyresDamage;
-        private TyreDataBuffer<byte> _brakesDamage;
-        private TyreDataBuffer<byte> _tyreBlisters;
+        private WheelDataBuffer<float> _tyresWear;
+        private WheelDataBuffer<byte> _tyresDamage;
+        private WheelDataBuffer<byte> _brakesDamage;
+        private WheelDataBuffer<byte> _tyreBlisters;
         private readonly byte _frontLeftWingDamage;
         private readonly byte _frontRightWingDamage;
         private readonly byte _rearWingDamage;
@@ -32,22 +32,22 @@ namespace F1Packets.F125
         /// <summary>
         /// The percentage of wear for each tyre.
         /// </summary>
-        public readonly TyreDataBuffer<float> TyresWear => _tyresWear;
+        public readonly WheelDataBuffer<float> TyresWear => _tyresWear;
 
         /// <summary>
         /// The percentage of damage to each tyre.
         /// </summary>
-        public readonly TyreDataBuffer<byte> TyresDamage => _tyresDamage;
+        public readonly WheelDataBuffer<byte> TyresDamage => _tyresDamage;
 
         /// <summary>
         /// The percentage of damage to each of the brakes.
         /// </summary>
-        public readonly TyreDataBuffer<byte> BrakesDamage => _brakesDamage;
+        public readonly WheelDataBuffer<byte> BrakesDamage => _brakesDamage;
 
         /// <summary>
         /// The percentage of blistering on each tyre.
         /// </summary>
-        public readonly TyreDataBuffer<byte> TyreBlisters => _tyreBlisters;
+        public readonly WheelDataBuffer<byte> TyreBlisters => _tyreBlisters;
 
         /// <summary>
         /// The percentage of damage to the front left wing.

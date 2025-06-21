@@ -23,7 +23,7 @@ namespace F1Packets.F125
         private readonly byte _brakePressure;
         private readonly byte _brakeBias;
         private readonly byte _engineBraking;
-        private readonly TyreDataBuffer<float> _tyrePressure;
+        private readonly WheelDataBuffer<float> _tyrePressure;
         private readonly byte _ballast;
         private readonly float _fuelLoad;
 
@@ -115,7 +115,7 @@ namespace F1Packets.F125
         /// <summary>
         /// The set initial tyre pressures for each tyre.
         /// </summary>
-        public TyreDataBuffer<float> TyrePressure => _tyrePressure;
+        public WheelDataBuffer<float> TyrePressure => _tyrePressure;
 
         /// <summary>
         /// The ballast setting.

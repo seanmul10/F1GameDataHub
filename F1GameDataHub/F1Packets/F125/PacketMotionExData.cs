@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace F1Packets.F125
 {
@@ -7,28 +6,28 @@ namespace F1Packets.F125
     public readonly struct PacketMotionExData : IF1Packet
     {
         private readonly PacketHeader _header;
-        private readonly TyreDataBuffer<float> _suspensionPosition;
-        private readonly TyreDataBuffer<float> _suspensionVelocity;
-        private readonly TyreDataBuffer<float> _suspensionAcceleration;
-        private readonly TyreDataBuffer<float> _wheelSpeed;
-        private readonly TyreDataBuffer<float> _wheelSlipRatio;
-        private readonly TyreDataBuffer<float> _wheelSlipAngle;
-        private readonly TyreDataBuffer<float> _wheelLatForce;
-        private readonly TyreDataBuffer<float> _wheelLongForce;
+        private readonly WheelDataBuffer<float> _suspensionPosition;
+        private readonly WheelDataBuffer<float> _suspensionVelocity;
+        private readonly WheelDataBuffer<float> _suspensionAcceleration;
+        private readonly WheelDataBuffer<float> _wheelSpeed;
+        private readonly WheelDataBuffer<float> _wheelSlipRatio;
+        private readonly WheelDataBuffer<float> _wheelSlipAngle;
+        private readonly WheelDataBuffer<float> _wheelLatForce;
+        private readonly WheelDataBuffer<float> _wheelLongForce;
         private readonly float _heightOfCOGAboveGround;
         private readonly Vector3<float> _localVelocity;
         private readonly Vector3<float> _angularVelocity;
         private readonly Vector3<float> _angularAcceleration;
         private readonly float _frontWheelsAngle;
-        private readonly TyreDataBuffer<float> _wheelVertForce;
+        private readonly WheelDataBuffer<float> _wheelVertForce;
         private readonly float _frontAeroHeight;
         private readonly float _rearAeroHeight;
         private readonly float _frontRollAngle;
         private readonly float _rearRollAngle;
         private readonly float _chassisYaw;
         private readonly float _chassisPitch;
-        private readonly TyreDataBuffer<float> _wheelCamber;
-        private readonly TyreDataBuffer<float> _wheelCamberGain;
+        private readonly WheelDataBuffer<float> _wheelCamber;
+        private readonly WheelDataBuffer<float> _wheelCamberGain;
 
         /// <inheritdoc/>
         public PacketHeader Header => _header;
@@ -36,42 +35,42 @@ namespace F1Packets.F125
         /// <summary>
         /// The position of the suspension for each wheel in meters.
         /// </summary>
-        public TyreDataBuffer<float> SuspensionPosition => _suspensionPosition;
+        public WheelDataBuffer<float> SuspensionPosition => _suspensionPosition;
 
         /// <summary>
         /// The velocity of the suspension for each wheel in meters per second.
         /// </summary>
-        public TyreDataBuffer<float> SuspensionVelocity => _suspensionVelocity;
+        public WheelDataBuffer<float> SuspensionVelocity => _suspensionVelocity;
 
         /// <summary>
         /// The acceleration of the suspension for each wheel in meters per second squared.
         /// </summary>
-        public TyreDataBuffer<float> SuspensionAcceleration => _suspensionAcceleration;
+        public WheelDataBuffer<float> SuspensionAcceleration => _suspensionAcceleration;
 
         /// <summary>
         /// The speed of each wheel in meters per second.
         /// </summary>
-        public TyreDataBuffer<float> WheelSpeed => _wheelSpeed;
+        public WheelDataBuffer<float> WheelSpeed => _wheelSpeed;
 
         /// <summary>
         /// The wheel slip ratio for each wheel, representing the difference between the wheel speed and the vehicle speed.
         /// </summary>
-        public TyreDataBuffer<float> WheelSlipRatio => _wheelSlipRatio;
+        public WheelDataBuffer<float> WheelSlipRatio => _wheelSlipRatio;
 
         /// <summary>
         /// The wheel slip angle for each wheel in radians, indicating the angle between the wheel's direction and its actual path.
         /// </summary>
-        public TyreDataBuffer<float> WheelSlipAngle => _wheelSlipAngle;
+        public WheelDataBuffer<float> WheelSlipAngle => _wheelSlipAngle;
 
         /// <summary>
         /// The lateral force on each wheel in newtons.
         /// </summary>
-        public TyreDataBuffer<float> WheelLatForce => _wheelLatForce;
+        public WheelDataBuffer<float> WheelLatForce => _wheelLatForce;
 
         /// <summary>
         /// The longitudinal force on each wheel in newtons.
         /// </summary>
-        public TyreDataBuffer<float> WheelLongForce => _wheelLongForce;
+        public WheelDataBuffer<float> WheelLongForce => _wheelLongForce;
 
         /// <summary>
         /// The height of the center of gravity above the ground in meters.
@@ -101,7 +100,7 @@ namespace F1Packets.F125
         /// <summary>
         /// The vertical force on each wheel in newtons.
         /// </summary>
-        public TyreDataBuffer<float> WheelVertForce => _wheelVertForce;
+        public WheelDataBuffer<float> WheelVertForce => _wheelVertForce;
 
         /// <summary>
         /// The height of the front plank edge above the ground in meters.
@@ -136,11 +135,11 @@ namespace F1Packets.F125
         /// <summary>
         /// The camber of each wheel in radians.
         /// </summary>
-        public TyreDataBuffer<float> WheelCamber => _wheelCamber;
+        public WheelDataBuffer<float> WheelCamber => _wheelCamber;
 
         /// <summary>
         /// The camber gain of each wheel in radians, representing the difference between the active camber and dynamic camber.
         /// </summary>
-        public TyreDataBuffer<float> WheelCamberGain => _wheelCamberGain;
+        public WheelDataBuffer<float> WheelCamberGain => _wheelCamberGain;
     }
 }

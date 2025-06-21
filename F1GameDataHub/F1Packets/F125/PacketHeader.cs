@@ -19,7 +19,7 @@ namespace F1Packets.F125
     }
 
     [InlineArray(4)]
-    public struct TyreDataBuffer<T> where T : unmanaged
+    public struct WheelDataBuffer<T> where T : unmanaged
     {
         private T _element0;
     }

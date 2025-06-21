@@ -1,6 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Xml.Linq;
 
 namespace F1Packets.F125
 {
@@ -43,7 +42,7 @@ namespace F1Packets.F125
         /// <summary>
         /// The colour of the livery in HEX format.
         /// </summary>
-        public readonly string HexColour => 
+        public readonly string HexColour =>
             $"#{_red:X2}{_green:X2}{_blue:X2}";
     }
 
@@ -80,7 +79,7 @@ namespace F1Packets.F125
         /// The ID of the real or EA created driver. <c>null</c> if the driver is network human.
         /// See the documentation for the driver name for each ID.
         /// </summary>
-        public readonly byte? DriverId => 
+        public readonly byte? DriverId =>
             _driverId == 255 ? null : _driverId;
 
         /// <summary>

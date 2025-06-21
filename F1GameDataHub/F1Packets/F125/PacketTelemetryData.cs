@@ -25,12 +25,12 @@ namespace F1Packets.F125
         private readonly byte _drs;
         private readonly byte _revLightsPercent;
         private readonly ushort _revLightsBitValue;
-        private readonly TyreDataBuffer<ushort> _brakesTemperature;
-        private readonly TyreDataBuffer<byte> _tyresSurfaceTemperature;
-        private readonly TyreDataBuffer<byte> _tyresInnerTemperature;
+        private readonly WheelDataBuffer<ushort> _brakesTemperature;
+        private readonly WheelDataBuffer<byte> _tyresSurfaceTemperature;
+        private readonly WheelDataBuffer<byte> _tyresInnerTemperature;
         private readonly ushort _engineTemperature;
-        private readonly TyreDataBuffer<float> _tyresPressure;
-        private readonly TyreDataBuffer<byte> _surfaceType;
+        private readonly WheelDataBuffer<float> _tyresPressure;
+        private readonly WheelDataBuffer<byte> _surfaceType;
 
         /// <summary>
         /// The speed of the car in kilometers per hour.
@@ -86,17 +86,17 @@ namespace F1Packets.F125
         /// <summary>
         /// The temperature of each brake in degrees Celsius.
         /// </summary>
-        public TyreDataBuffer<ushort> BrakesTemperature => _brakesTemperature;
+        public WheelDataBuffer<ushort> BrakesTemperature => _brakesTemperature;
 
         /// <summary>
         /// The surface temperature of each tyre in degrees Celsius.
         /// </summary>
-        public TyreDataBuffer<byte> TyresSurfaceTemperature => _tyresSurfaceTemperature;
+        public WheelDataBuffer<byte> TyresSurfaceTemperature => _tyresSurfaceTemperature;
 
         /// <summary>
         /// The carcass temperature of each tyre in degrees Celsius.
         /// </summary>
-        public TyreDataBuffer<byte> TyresInnerTemperature => _tyresInnerTemperature;
+        public WheelDataBuffer<byte> TyresInnerTemperature => _tyresInnerTemperature;
 
         /// <summary>
         /// The temperature of the engine in degrees Celsius.
@@ -106,13 +106,13 @@ namespace F1Packets.F125
         /// <summary>
         /// The pressure of each tyre in PSI.
         /// </summary>
-        public TyreDataBuffer<float> TyresPressure => _tyresPressure;
+        public WheelDataBuffer<float> TyresPressure => _tyresPressure;
 
         /// <summary>
         /// The surface each tyre is currently driving on.
         /// See the documentation for the surface type for each ID.
         /// </summary>
-        public TyreDataBuffer<byte> SurfaceType => _surfaceType;
+        public WheelDataBuffer<byte> SurfaceType => _surfaceType;
     }
 
     [InlineArray(PacketConstants.MaxNumCarsInUdpData)]
