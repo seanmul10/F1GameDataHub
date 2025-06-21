@@ -19,25 +19,87 @@ namespace F1Packets.F125
     }
 
     [InlineArray(4)]
-    public struct TyreDataBuffer<T> where T : unmanaged
+    public struct WheelDataBuffer<T> where T : unmanaged
     {
         private T _element0;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct PacketHeader
+    public readonly struct PacketHeader
     {
-        public ushort PacketFormat;              // 2025
-        public byte GameYear;                    // e.g. 25
-        public byte GameMajorVersion;            // X.00
-        public byte GameMinorVersion;            // 1.XX
-        public byte PacketVersion;               // packet version
-        public F1PacketId PacketId;                // packet type
-        public ulong SessionUid;                 // unique session ID
-        public float SessionTime;                // session timestamp (seconds)
-        public uint FrameIdentifier;             // frame ID
-        public uint OverallFrameIdentifier;      // overall frame ID, monotonic
-        public byte PlayerCarIndex;              // player car index
-        public byte SecondaryPlayerCarIndex;    // secondary player car index, 255 if none
+        private readonly ushort _packetFormat;
+        private readonly byte _gameYear;
+        private readonly byte _gameMajorVersion;
+        private readonly byte _gameMinorVersion;
+        private readonly byte _packetVersion;
+        private readonly F1PacketId _packetId;
+        private readonly ulong _sessionUid;
+        private readonly float _sessionTime;
+        private readonly uint _frameIdentifier;
+        private readonly uint _overallFrameIdentifier;
+        private readonly byte _playerCarIndex;
+        private readonly byte _secondaryPlayerCarIndex;
+
+        /// <summary>
+        /// The format of the packet, e.g. <c>2025</c> for F1 2025.
+        /// </summary>
+        public readonly ushort PacketFormat => _packetFormat;
+
+        /// <summary>
+        /// The last two digits of the game year, e.g. <c>25</c>.
+        /// </summary>
+        public readonly byte GameYear => _gameYear;
+
+        /// <summary>
+        /// The major part of the game version.
+        /// </summary>
+        public readonly byte GameMajorVersion => _gameMajorVersion;
+
+        /// <summary>
+        /// The minor part of the game version.
+        /// </summary>
+        public readonly byte GameMinorVersion => _gameMinorVersion;
+
+        /// <summary>
+        /// The version of this packet type. The first version of a given packet type is 1.
+        /// </summary>
+        public readonly byte PacketVersion => _packetVersion;
+
+        /// <summary>
+        /// The identifier for the packet type. See <see cref="F1PacketId"/> for possible values.
+        /// </summary>
+        public readonly F1PacketId PacketId => _packetId;
+
+        /// <summary>
+        /// The unique identifier for the session.
+        /// </summary>
+        public readonly ulong SessionUid => _sessionUid;
+
+        /// <summary>
+        /// The current session time in seconds.
+        /// </summary>
+        public readonly float SessionTime => _sessionTime;
+
+        /// <summary>
+        /// The frame identifier for the frame the data was retrieved on.
+        /// </summary>
+        public readonly uint FrameIdentifier => _frameIdentifier;
+
+        /// <summary>
+        /// The overall identifier for the frame the data was retreived on.
+        /// Does not go back after a flashback.
+        /// </summary>
+        public readonly uint OverallFrameIdentifier => _overallFrameIdentifier;
+
+        /// <summary>
+        /// The index of the player car in the session.
+        /// </summary>
+        public readonly byte PlayerCarIndex => _playerCarIndex;
+
+        /// <summary>
+        /// The index of the secondary player car in the session, if applicable. Otherwise, <c>null</c>.
+        /// </summary>
+        public readonly byte? SecondaryPlayerCarIndex =>
+            _secondaryPlayerCarIndex == 255 ? null : _secondaryPlayerCarIndex;
     }
 }
