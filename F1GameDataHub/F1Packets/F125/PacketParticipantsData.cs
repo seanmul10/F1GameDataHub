@@ -47,7 +47,7 @@ namespace F1Packets.F125
     }
 
     [InlineArray(ParticipantsPacketConstants.LiveryColours)]
-    public struct LiveyColourBuffer
+    public struct LiveryColourBuffer
     {
         private LiveryColour _element0;
     }
@@ -68,7 +68,7 @@ namespace F1Packets.F125
         private readonly ushort _techLevel;
         private readonly byte _platform;
         private readonly byte _numColours;
-        private readonly LiveyColourBuffer _liveryColours;
+        private readonly LiveryColourBuffer _liveryColours;
 
         /// <summary>
         /// Whether the driver is AI controlled.
@@ -145,7 +145,7 @@ namespace F1Packets.F125
         /// <summary>
         /// The livery colours being used on this car.
         /// </summary>
-        public readonly LiveyColourBuffer LiveryColours => _liveryColours;
+        public readonly LiveryColourBuffer LiveryColours => _liveryColours;
     }
 
     [InlineArray(PacketConstants.MaxNumCarsInUdpData)]
