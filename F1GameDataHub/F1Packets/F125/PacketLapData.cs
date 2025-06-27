@@ -242,21 +242,21 @@ namespace F1Packets.F125
         private readonly byte _timeTrialRivalCarIdx;
 
         /// <inheritdoc />
-        public readonly PacketHeader Header => Header;
+        public readonly PacketHeader Header => _header;
 
         /// <summary>
         /// The lap data for each car in the session.
         /// </summary>
-        public readonly LapDataBuffer LapData => LapData;
+        public readonly LapDataBuffer LapData => _lapData;
 
         /// <summary>
         /// The car index that holds the personal best time. Only valid in Time Trial sessions.
         /// </summary>
-        public readonly byte TimeTrialPBCarIdx => TimeTrialPBCarIdx;
+        public readonly byte TimeTrialPBCarIdx => _timeTrialPBCarIdx;
 
         /// <summary>
         /// The car index that of the selected rival. Only valid in Time Trial sessions.
         /// </summary>
-        public readonly byte TimeTrialRivalCarIdx => TimeTrialRivalCarIdx;
+        public readonly byte TimeTrialRivalCarIdx => _timeTrialRivalCarIdx;
     }
 }
