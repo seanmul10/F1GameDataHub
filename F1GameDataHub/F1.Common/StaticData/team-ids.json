@@ -1,0 +1,150 @@
+[
+  {
+    "id": 0,
+    "name": "Mercedes"
+  },
+  {
+    "id": 1,
+    "name": "Ferrari"
+  },
+  {
+    "id": 2,
+    "name": "Red Bull Racing"
+  },
+  {
+    "id": 3,
+    "name": "Williams"
+  },
+  {
+    "id": 4,
+    "name": "Aston Martin"
+  },
+  {
+    "id": 5,
+    "name": "Alpine"
+  },
+  {
+    "id": 6,
+    "name": "RB"
+  },
+  {
+    "id": 7,
+    "name": "Haas"
+  },
+  {
+    "id": 8,
+    "name": "McLaren"
+  },
+  {
+    "id": 9,
+    "name": "Sauber"
+  },
+  {
+    "id": 41,
+    "name": "F1 Generic"
+  },
+  {
+    "id": 104,
+    "name": "F1 Custom Team"
+  },
+  {
+    "id": 129,
+    "name": "Konnersport"
+  },
+  {
+    "id": 142,
+    "name": "APXGP ‘24"
+  },
+  {
+    "id": 154,
+    "name": "APXGP ‘25"
+  },
+  {
+    "id": 155,
+    "name": "Konnersport ‘24"
+  },
+  {
+    "id": 158,
+    "name": "Art GP ‘24"
+  },
+  {
+    "id": 159,
+    "name": "Campos ‘24"
+  },
+  {
+    "id": 160,
+    "name": "Rodin Motorsport ‘24"
+  },
+  {
+    "id": 161,
+    "name": "AIX Racing ‘24"
+  },
+  {
+    "id": 162,
+    "name": "DAMS ‘24"
+  },
+  {
+    "id": 163,
+    "name": "Hitech ‘24"
+  },
+  {
+    "id": 164,
+    "name": "MP Motorsport ‘24"
+  },
+  {
+    "id": 165,
+    "name": "Prema ‘24"
+  },
+  {
+    "id": 166,
+    "name": "Trident ‘24"
+  },
+  {
+    "id": 167,
+    "name": "Van Amersfoort Racing ‘24"
+  },
+  {
+    "id": 168,
+    "name": "Invicta ‘24"
+  },
+  {
+    "id": 185,
+    "name": "Mercedes ‘24"
+  },
+  {
+    "id": 186,
+    "name": "Ferrari ‘24"
+  },
+  {
+    "id": 187,
+    "name": "Red Bull Racing ‘24"
+  },
+  {
+    "id": 188,
+    "name": "Williams ‘24"
+  },
+  {
+    "id": 189,
+    "name": "Aston Martin ‘24"
+  },
+  {
+    "id": 190,
+    "name": "Alpine ‘24"
+  },
+  {
+    "id": 191,
+    "name": "RB ‘24"
+  },
+  {
+    "id": 192,
+    "name": "Haas ‘24"
+  },
+  {
+    "id": 193,
+    "name": "McLaren ‘24"
+  },
+  {
+    "id": 194,
+    "name": "Sauber ‘24"
+  }
+]
