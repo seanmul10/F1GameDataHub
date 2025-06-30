@@ -1,0 +1,110 @@
+[
+  {
+    "id": 0,
+    "name": "Melbourne"
+  },
+  {
+    "id": 2,
+    "name": "Shanghai"
+  },
+  {
+    "id": 3,
+    "name": "Sakhir (Bahrain)"
+  },
+  {
+    "id": 4,
+    "name": "Catalunya"
+  },
+  {
+    "id": 5,
+    "name": "Monaco"
+  },
+  {
+    "id": 6,
+    "name": "Montreal"
+  },
+  {
+    "id": 7,
+    "name": "Silverstone"
+  },
+  {
+    "id": 9,
+    "name": "Hungaroring"
+  },
+  {
+    "id": 10,
+    "name": "Spa"
+  },
+  {
+    "id": 11,
+    "name": "Monza"
+  },
+  {
+    "id": 12,
+    "name": "Singapore"
+  },
+  {
+    "id": 13,
+    "name": "Suzuka"
+  },
+  {
+    "id": 14,
+    "name": "Abu Dhabi"
+  },
+  {
+    "id": 15,
+    "name": "Texas"
+  },
+  {
+    "id": 16,
+    "name": "Brazil"
+  },
+  {
+    "id": 17,
+    "name": "Austria"
+  },
+  {
+    "id": 19,
+    "name": "Mexico"
+  },
+  {
+    "id": 20,
+    "name": "Baku (Azerbaijan)"
+  },
+  {
+    "id": 26,
+    "name": "Zandvoort"
+  },
+  {
+    "id": 27,
+    "name": "Imola"
+  },
+  {
+    "id": 29,
+    "name": "Jeddah"
+  },
+  {
+    "id": 30,
+    "name": "Miami"
+  },
+  {
+    "id": 31,
+    "name": "Las Vegas"
+  },
+  {
+    "id": 32,
+    "name": "Losail"
+  },
+  {
+    "id": 39,
+    "name": "Silverstone (Reverse)"
+  },
+  {
+    "id": 40,
+    "name": "Austria (Reverse)"
+  },
+  {
+    "id": 41,
+    "name": "Zandvoort (Reverse)"
+  }
+]
