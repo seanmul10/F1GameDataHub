@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS InfringementTypes (
+    id INTEGER PRIMARY KEY,
+    type TEXT NOT NULL
+);
