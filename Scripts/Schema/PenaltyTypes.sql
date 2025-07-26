@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS PenaltyTypes (
+    id INTEGER PRIMARY KEY,
+    type TEXT NOT NULL
+);

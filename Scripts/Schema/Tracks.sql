@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS Tracks (
+    id INTEGER PRIMARY KEY,
+    type TEXT NOT NULL
+);
