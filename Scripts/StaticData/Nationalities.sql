@@ -65,6 +65,7 @@ INSERT INTO Nationalities (id, type) VALUES
 (64, 'Portuguese'),
 (65, 'Qatari'),
 (66, 'Romanian'),
+(67, 'Russian'),
 (68, 'Salvadoran'),
 (69, 'Saudi'),
 (70, 'Scottish'),
