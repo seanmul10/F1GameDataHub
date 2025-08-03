@@ -1,4 +1,4 @@
-INSERT INTO Nationalities (id, type) VALUES
+INSERT INTO Nationalities (id, name) VALUES
 (1, 'American'),
 (2, 'Argentinean'),
 (3, 'Australian'),
@@ -90,4 +90,4 @@ INSERT INTO Nationalities (id, type) VALUES
 (89, 'Bosnian'),
 (90, 'Filipino')
 ON CONFLICT (id) DO UPDATE
-SET type = EXCLUDED.type;
+SET name = EXCLUDED.name;
