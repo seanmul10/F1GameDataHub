@@ -1,4 +1,4 @@
-INSERT INTO Tracks (id, type) VALUES
+INSERT INTO Tracks (id, name) VALUES
 (0, 'Melbourne'),
 (2, 'Shanghai'),
 (3, 'Sakhir'),
@@ -27,4 +27,4 @@ INSERT INTO Tracks (id, type) VALUES
 (40, 'Austria (Reverse)'),
 (41, 'Zandvoort (Reverse)')
 ON CONFLICT (id) DO UPDATE
-SET type = EXCLUDED.type;
+SET name = EXCLUDED.name;

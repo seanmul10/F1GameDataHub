@@ -1,4 +1,4 @@
-INSERT INTO Teams (id, type) VALUES
+INSERT INTO Teams (id, name) VALUES
 (0, 'Mercedes'),
 (1, 'Ferrari'),
 (2, 'Red Bull Racing'),
@@ -37,4 +37,4 @@ INSERT INTO Teams (id, type) VALUES
 (193, 'McLaren ‘24'),
 (194, 'Sauber ‘24')
 ON CONFLICT (id) DO UPDATE
-SET type = EXCLUDED.type;
+SET name = EXCLUDED.name;

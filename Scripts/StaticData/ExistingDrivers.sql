@@ -1,4 +1,4 @@
-INSERT INTO ExistingDrivers (id, type) VALUES
+INSERT INTO ExistingDrivers (id, name) VALUES
 (0, 'Carlos Sainz'),
 (2, 'Daniel Ricciardo'),
 (3, 'Fernando Alonso'),
@@ -87,4 +87,4 @@ INSERT INTO ExistingDrivers (id, type) VALUES
 (175, 'Tim Tramnitz'),
 (185, 'Luca Cortez')
 ON CONFLICT (id) DO UPDATE
-SET type = EXCLUDED.type;
+SET name = EXCLUDED.name;
