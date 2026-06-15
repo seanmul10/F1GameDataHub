@@ -17,6 +17,7 @@
         TyreSets = 12,
         MotionEx = 13,
         TimeTrial = 14,
-        LapPositions = 15
+        LapPositions = 15,
+        CarTelemetry2 = 16
     }
 }

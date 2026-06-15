@@ -2,6 +2,7 @@
 using F1.Common.Lookups;
 using F1Packets;
 using F1Packets.F125;
+using F126 = F1Packets.F126;
 using Npgsql;
 using PacketRecording;
 using System;
@@ -16,9 +17,18 @@ namespace OvertakeTest
     /// </summary>
     public class TestListener(IPacketReceiver packetReceiver)
     {
-        private readonly Channel<PacketCarTelemetryData> _telemetryChannel = Channel.CreateUnbounded<PacketCarTelemetryData>();
+        private readonly Channel<TelemetrySample> _telemetryChannel = Channel.CreateUnbounded<TelemetrySample>();
 
         private readonly Guid _appContextId = Guid.NewGuid(); // Unique identifier for the application context
+
+        private readonly record struct TelemetrySample(
+            long FrameId,
+            int DriverIndex,
+            long SessionUid,
+            float Throttle,
+            float Brake,
+            float Steering,
+            int Speed);
 
         /// <summary>
         /// Starts listening to the UDP port and records incoming packets to a file.
@@ -54,23 +64,62 @@ namespace OvertakeTest
             {
                 // Recieve a UDP packet
                 var udpResult = await packetReceiver.ReceiveAsync(cancellationToken);
-                switch (udpResult.Buffer[6])
+                if (!PacketInspector.TryReadHeader(udpResult.Buffer, out var header))
                 {
-                    case (int)F1PacketId.Session:
+                    Debug.WriteLine($"Packet too short. Length: {udpResult.Buffer.Length}");
+                    continue;
+                }
+
+                switch ((F1PacketId)header.PacketId)
+                {
+                    case F1PacketId.Session:
                         var sessionPacket = Utils.ReadFromBytes<PacketSessionData>(udpResult.Buffer);
                         await WriteSessionMetadata(conn, sessionPacket);
                         await WriteSessionState(conn, sessionPacket);
                         break;
-                    case (int)F1PacketId.Participants:
-                        var participantsPacket = Utils.ReadFromBytes<PacketParticipantsData>(udpResult.Buffer);
-                        await WriteParticipants(conn, participantsPacket);
+                    case F1PacketId.Participants:
+                        if (header.PacketFormat == PacketFormats.F126)
+                        {
+                            var participantsPacket = Utils.ReadFromBytes<F126.PacketParticipantsData>(udpResult.Buffer);
+                            await WriteParticipants(conn, participantsPacket);
+                        }
+                        else if (header.PacketFormat == PacketFormats.F125)
+                        {
+                            var participantsPacket = Utils.ReadFromBytes<PacketParticipantsData>(udpResult.Buffer);
+                            await WriteParticipants(conn, participantsPacket);
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Unsupported packet format for participants packet: {header.PacketFormat}");
+                        }
+
                         break;
-                    case (int)F1PacketId.CarTelemetry:
-                        var telemetryPacket = Utils.ReadFromBytes<PacketCarTelemetryData>(udpResult.Buffer);
-                        await _telemetryChannel.Writer.WriteAsync(telemetryPacket, cancellationToken);
+                    case F1PacketId.CarTelemetry:
+                        if (header.PacketFormat == PacketFormats.F126)
+                        {
+                            var telemetryPacket = Utils.ReadFromBytes<F126.PacketCarTelemetryData>(udpResult.Buffer);
+                            await WriteTelemetrySamples(telemetryPacket, cancellationToken);
+                        }
+                        else if (header.PacketFormat == PacketFormats.F125)
+                        {
+                            var telemetryPacket = Utils.ReadFromBytes<PacketCarTelemetryData>(udpResult.Buffer);
+                            await WriteTelemetrySamples(telemetryPacket, cancellationToken);
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Unsupported packet format for telemetry packet: {header.PacketFormat}");
+                        }
+
+                        break;
+                    case F1PacketId.CarTelemetry2:
+                        if (header.PacketFormat == PacketFormats.F126)
+                        {
+                            _ = Utils.ReadFromBytes<F126.PacketCarTelemetry2Data>(udpResult.Buffer);
+                        }
+
                         break;
                     default:
-                        Debug.WriteLine($"Unknown sessionPacket type: {udpResult.Buffer[6]}");
+                        Debug.WriteLine($"Unknown sessionPacket type: {header.PacketId}");
                         break;
                 }
             }
@@ -92,15 +141,17 @@ namespace OvertakeTest
 
         public async Task HandleTelemetry(CancellationToken token)
         {
-            var buffer = new List<PacketCarTelemetryData>();
+            var buffer = new List<TelemetrySample>();
             var flushInterval = TimeSpan.FromMilliseconds(100);
             //var timer = new PeriodicTimer(flushInterval);
 
             while (await _telemetryChannel.Reader.WaitToReadAsync(token))
             {
                 // Drain as many items as have arrived since the last loop‑turn
-                while (_telemetryChannel.Reader.TryRead(out var pkt) && buffer.Count < 300)
-                    buffer.Add(pkt);
+                while (_telemetryChannel.Reader.TryRead(out var sample) && buffer.Count < 3000)
+                {
+                    buffer.Add(sample);
+                }
 
                 // If the interval elapsed (or cancellation requested), flush
                 if (buffer.Count > 0)// && (buffer.Count > 100 || await timer.WaitForNextTickAsync(token)))
@@ -112,7 +163,7 @@ namespace OvertakeTest
             }
         }
 
-        async Task WriteBatchToDbAsync(List<PacketCarTelemetryData> batch, CancellationToken token)
+        async Task WriteBatchToDbAsync(List<TelemetrySample> batch, CancellationToken token)
         {
             if (batch.Count == 0) return;
 
@@ -127,36 +178,32 @@ namespace OvertakeTest
             var parameters = new List<NpgsqlParameter>();
             int paramIndex = 0;
 
-            for (int pktIdx = 0; pktIdx < batch.Count; pktIdx++)
+            for (int idx = 0; idx < batch.Count; idx++)
             {
-                var packet = batch[pktIdx];
+                var sample = batch[idx];
+                var pFrameId = $"@frameId{paramIndex}";
+                var pDriverId = $"@driverId{paramIndex}";
+                var pSessionId = $"@sessionId{paramIndex}";
+                var pThrottle = $"@throttle{paramIndex}";
+                var pBrake = $"@brake{paramIndex}";
+                var pSteering = $"@steering{paramIndex}";
+                var pSpeed = $"@speed{paramIndex}";
 
-                var sessionUid = unchecked((long)packet.Header.SessionUid);
+                sb.Append($"({pFrameId}, {pDriverId}, {pSessionId}, {pThrottle}, {pBrake}, {pSteering}, {pSpeed})");
 
-                for (int carIdx = 0; carIdx < 22; carIdx++, paramIndex++)
+                if (idx < batch.Count - 1)
                 {
-                    var pFrameId = $"@frameId{paramIndex}";
-                    var pDriverId = $"@driverId{paramIndex}";
-                    var pSessionId = $"@sessionId{paramIndex}";
-                    var pThrottle = $"@throttle{paramIndex}";
-                    var pBrake = $"@brake{paramIndex}";
-                    var pSteering = $"@steering{paramIndex}";
-                    var pSpeed = $"@speed{paramIndex}";
-
-                    sb.Append($"({pFrameId}, {pDriverId}, {pSessionId}, {pThrottle}, {pBrake}, {pSteering}, {pSpeed})");
-
-                    // Add comma unless this is the last car of the last packet
-                    bool isLast = pktIdx == batch.Count - 1 && carIdx == 21;
-                    if (!isLast) sb.Append(", ");
-
-                    parameters.Add(new NpgsqlParameter(pFrameId, (long)packet.Header.FrameIdentifier));
-                    parameters.Add(new NpgsqlParameter(pDriverId, carIdx));
-                    parameters.Add(new NpgsqlParameter(pSessionId, sessionUid));
-                    parameters.Add(new NpgsqlParameter(pThrottle, packet.CarTelemetryData[carIdx].Throttle));
-                    parameters.Add(new NpgsqlParameter(pBrake, packet.CarTelemetryData[carIdx].Brake));
-                    parameters.Add(new NpgsqlParameter(pSteering, packet.CarTelemetryData[carIdx].Steer));
-                    parameters.Add(new NpgsqlParameter(pSpeed, (int)packet.CarTelemetryData[carIdx].Speed));
+                    sb.Append(", ");
                 }
+
+                parameters.Add(new NpgsqlParameter(pFrameId, sample.FrameId));
+                parameters.Add(new NpgsqlParameter(pDriverId, sample.DriverIndex));
+                parameters.Add(new NpgsqlParameter(pSessionId, sample.SessionUid));
+                parameters.Add(new NpgsqlParameter(pThrottle, sample.Throttle));
+                parameters.Add(new NpgsqlParameter(pBrake, sample.Brake));
+                parameters.Add(new NpgsqlParameter(pSteering, sample.Steering));
+                parameters.Add(new NpgsqlParameter(pSpeed, sample.Speed));
+                paramIndex++;
             }
 
             sb.Append(" ON CONFLICT DO NOTHING;");
@@ -217,7 +264,7 @@ namespace OvertakeTest
 
         private static async Task WriteParticipants(NpgsqlConnection conn, PacketParticipantsData packet)
         {
-            for (int i = 0; i < 22; i++)
+            for (int i = 0; i < PacketConstants.MaxNumCarsInUdpData; i++)
             {
                 using var cmd = new NpgsqlCommand(@"
                 INSERT INTO participants (
@@ -260,6 +307,51 @@ namespace OvertakeTest
             }
         }
 
+        private static async Task WriteParticipants(NpgsqlConnection conn, F126.PacketParticipantsData packet)
+        {
+            for (int i = 0; i < F126.PacketConstants.MaxNumCarsInUdpData; i++)
+            {
+                using var cmd = new NpgsqlCommand(@"
+                INSERT INTO participants (
+                    session_uid,
+                    driver_id,
+                    network_id,
+                    name,
+                    team_id,
+                    nationality_id,
+                    is_ai_controlled,
+                    race_number
+                )
+                VALUES (
+                    @session_uid,
+                    @driver_id,
+                    @network_id,
+                    @name,
+                    @team_id,
+                    @nationality_id,
+                    @is_ai_controlled,
+                    @race_number
+                )
+                ON CONFLICT (session_uid, driver_id) DO NOTHING;
+            ", conn);
+
+                var sessionUid = unchecked((long)packet.Header.SessionUid);
+                var name = packet.Participants[i].Name;
+                if (name == null || name == "Player") name = $"Driver {i}";
+
+                cmd.Parameters.AddWithValue("session_uid", sessionUid);
+                cmd.Parameters.AddWithValue("driver_id", i);
+                cmd.Parameters.AddWithValue("network_id", (int)packet.Participants[i].NetworkId);
+                cmd.Parameters.AddWithValue("name", name);
+                cmd.Parameters.AddWithValue("team_id", (int)packet.Participants[i].TeamId);
+                cmd.Parameters.AddWithValue("nationality_id", packet.Participants[i].Nationality);
+                cmd.Parameters.AddWithValue("is_ai_controlled", packet.Participants[i].AiControlled);
+                cmd.Parameters.AddWithValue("race_number", packet.Participants[i].RaceNumber);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
+
         private static async Task<int> WriteTelemetry(NpgsqlConnection conn, PacketCarTelemetryData packet, int carIndex)
         {
             var cmd = new NpgsqlCommand(@"
@@ -294,6 +386,48 @@ namespace OvertakeTest
             cmd.Parameters.AddWithValue("speed", (int)packet.CarTelemetryData[carIndex].Speed);
 
             return await cmd.ExecuteNonQueryAsync();
+        }
+
+        private async Task WriteTelemetrySamples(PacketCarTelemetryData packet, CancellationToken cancellationToken)
+        {
+            var sessionUid = unchecked((long)packet.Header.SessionUid);
+            var frameId = packet.Header.FrameIdentifier;
+
+            for (int carIndex = 0; carIndex < PacketConstants.MaxNumCarsInUdpData; carIndex++)
+            {
+                var telemetry = packet.CarTelemetryData[carIndex];
+                await _telemetryChannel.Writer.WriteAsync(
+                    new TelemetrySample(
+                        frameId,
+                        carIndex,
+                        sessionUid,
+                        telemetry.Throttle,
+                        telemetry.Brake,
+                        telemetry.Steer,
+                        telemetry.Speed),
+                    cancellationToken);
+            }
+        }
+
+        private async Task WriteTelemetrySamples(F126.PacketCarTelemetryData packet, CancellationToken cancellationToken)
+        {
+            var sessionUid = unchecked((long)packet.Header.SessionUid);
+            var frameId = packet.Header.FrameIdentifier;
+
+            for (int carIndex = 0; carIndex < F126.PacketConstants.MaxNumCarsInUdpData; carIndex++)
+            {
+                var telemetry = packet.CarTelemetryData[carIndex];
+                await _telemetryChannel.Writer.WriteAsync(
+                    new TelemetrySample(
+                        frameId,
+                        carIndex,
+                        sessionUid,
+                        telemetry.Throttle,
+                        telemetry.Brake,
+                        telemetry.Steer,
+                        telemetry.Speed),
+                    cancellationToken);
+            }
         }
     }
 }
