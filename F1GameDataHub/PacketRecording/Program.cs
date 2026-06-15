@@ -10,12 +10,17 @@ var streamFactory = new FileStreamFactory(compressionEnabled: true);
 var recorder = new UdpPacketRecorder(packetReceiver, streamFactory);
 
 var cts = new CancellationTokenSource();
-await Task.Run(async () =>
-{
-    await recorder.StartRecording(@"D:\Temp\div_1_brazil", cts.Token);
-});
-
 Console.WriteLine("Press Enter to stop recording...");
+var recordingTask = recorder.StartRecording(@"D:\Temp\div_1_brazil", cts.Token);
+
 Console.ReadLine();
 
 cts.Cancel();
+
+try
+{
+    await recordingTask;
+}
+catch (OperationCanceledException)
+{
+}

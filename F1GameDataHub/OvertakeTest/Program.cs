@@ -10,34 +10,18 @@ var packetReceiver = new UdpClientReceiver(udpClient);
 var recorder = new TestListener(packetReceiver);
 
 var cts = new CancellationTokenSource();
-
-var recordingTask = Task.Run(async () =>
-{
-    try
-    {
-        await recorder.StartRecording(cts.Token);
-    }
-    catch (Exception ex)
-    {
-        Console.Error.WriteLine($"Recording failed: {ex}");
-    }
-});
-
-var telemetryTask = Task.Run(async () =>
-{
-    try
-    {
-        await recorder.HandleTelemetry(cts.Token);
-    }
-    catch (Exception ex)
-    {
-        Console.Error.WriteLine($"Telemetry failed: {ex}");
-    }
-});
-
-await Task.WhenAll(recordingTask, telemetryTask);
+var recordingTask = recorder.StartRecording(cts.Token);
+var telemetryTask = recorder.HandleTelemetry(cts.Token);
 
 Console.WriteLine("Press Enter to stop recording...");
 Console.ReadLine();
 
 cts.Cancel();
+
+try
+{
+    await Task.WhenAll(recordingTask, telemetryTask);
+}
+catch (OperationCanceledException)
+{
+}

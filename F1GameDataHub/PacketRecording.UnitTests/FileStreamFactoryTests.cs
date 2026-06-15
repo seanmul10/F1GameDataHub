@@ -1,26 +1,57 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
-using System.Net.Sockets;
 using PacketRecording;
 
 namespace PacketRecording.UnitTests
 {
     [TestClass]
-    public class UdpClientReceiverTests
+    public class FileStreamFactoryTests
     {
-        [TestMethod]
-        public void UdpClientReceiver_Constructor_NullClient_ThrowsArgumentNullException()
+        private string _testDirectory = string.Empty;
+
+        [TestInitialize]
+        public void TestInitialize()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new UdpClientReceiver(null!));
+            _testDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(_testDirectory);
         }
 
         [TestMethod]
-        public void UdpClientReceiver_Constructor_ValidClient_DoesNotThrow()
+        public void CreateStream_CompressionDisabled_CreatesBinFile()
         {
-            using var udpClient = new UdpClient(0);
-            var receiver = new UdpClientReceiver(udpClient);
-            Assert.IsNotNull(receiver);
+            var factory = new FileStreamFactory(compressionEnabled: false);
+            var filePath = Path.Combine(_testDirectory, "testfile");
+
+            using var stream = factory.CreateStream(filePath);
+            Assert.IsInstanceOfType<FileStream>(stream);
+
+            stream.Flush();
+            Assert.IsTrue(File.Exists(filePath + ".bin"));
+            Assert.IsFalse(File.Exists(filePath + ".gz"));
+        }
+
+        [TestMethod]
+        public void CreateStream_CompressionEnabled_CreatesGzFile()
+        {
+            var factory = new FileStreamFactory(compressionEnabled: true);
+            var filePath = Path.Combine(_testDirectory, "testfile");
+
+            using var stream = factory.CreateStream(filePath);
+            Assert.IsInstanceOfType<GZipStream>(stream);
+
+            stream.Flush();
+            Assert.IsTrue(File.Exists(filePath + ".gz"));
+            Assert.IsFalse(File.Exists(filePath + ".bin"));
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            if (Directory.Exists(_testDirectory))
+            {
+                Directory.Delete(_testDirectory, true);
+            }
         }
     }
 }
