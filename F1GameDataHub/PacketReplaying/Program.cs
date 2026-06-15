@@ -1,20 +1,27 @@
 ﻿using PacketReplaying;
 using System.Net;
 
-string compressedFilePath = @"D:\Temp\div_2_australia.gz";
+string[] races =
+{
+    "s18_div_1_cota",
+};
 
-Console.WriteLine("Press Enter to start replaying...");
-Console.ReadLine();
+//Console.WriteLine("Press Enter to start replaying...");
+//Console.ReadLine();
 
-var replayer = new UdpPacketReplayer(IPAddress.Loopback, 20777, compressedFilePath);
 var cts = new CancellationTokenSource();
 
-await Task.Run(async () =>
+foreach (var race in races)
 {
-    await replayer.Replay(cts.Token);
-});
+    var replayer = new UdpPacketReplayer(IPAddress.Loopback, 20777, $@"C:\Users\seanm\Downloads\PacketRecording\{race}.gz");
 
-Console.WriteLine("Press Enter to stop replaying...");
-Console.ReadLine();
+    await Task.Run(async () =>
+    {
+        await replayer.Replay(cts.Token);
+    });
+}
+
+//Console.WriteLine("Press Enter to stop replaying...");
+//Console.ReadLine();
 
 cts.Cancel();

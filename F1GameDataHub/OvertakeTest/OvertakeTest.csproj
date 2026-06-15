@@ -8,8 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Npgsql" Version="9.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\F1.Common\F1.Common.csproj" />
     <ProjectReference Include="..\F1Packets\F1Packets.csproj" />
+    <ProjectReference Include="..\PacketRecording\PacketRecording.csproj" />
   </ItemGroup>
 
 </Project>

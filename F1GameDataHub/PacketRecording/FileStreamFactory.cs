@@ -12,7 +12,12 @@ namespace PacketRecording
             var path = filePath + (compressionEnabled ? ".gz" : ".bin");
             Console.WriteLine($"Creating stream for file: {path}");
 
-            var fileStream = new FileStream(path, FileMode.Create);
+            if (File.Exists(path))
+            {
+                throw new InvalidOperationException("Dump file already exists. Cannot run until dump.gz is deleted.");
+            }
+
+            var fileStream = new FileStream(path, FileMode.CreateNew);
             if (compressionEnabled)
             {
                 return new GZipStream(fileStream, CompressionMode.Compress);

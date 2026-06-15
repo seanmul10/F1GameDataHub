@@ -12,12 +12,13 @@ namespace F1Packets.F125
 
     public enum Weather
     {
-        Clear = 0,
-        LightCloud = 1,
-        Overcast = 2,
-        LightRain = 3,
-        HeavyRain = 4,
-        Storm = 5
+        Clear = 0, // Clear
+        LightCloud = 1, // Light Cloud
+        Overcast = 2, // Overcast
+        LightRain = 3, // Light Rain
+        ModerateRain = 4, // Heavy Rain
+        HeavyRain = 5, // Storm
+        ExtremeRain = 6 // No spec provided label
     }
 
     public enum SessionType

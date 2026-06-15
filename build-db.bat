@@ -21,7 +21,21 @@ echo.
 
 REM Run schema scripts
 echo Running schema scripts...
-for %%f in ("%BASEDIR%Scripts\Schema\*.sql") do (
+
+echo Tables...
+for %%f in ("%BASEDIR%Scripts\Schema\Tables\*.sql") do (
+    echo Running %%~nxf...
+    psql -h %PGHOST% -p %PGPORT% -U %PGUSER% -d %PGDATABASE% -v ON_ERROR_STOP=1 -f "%%f"
+    set EXITCODE=!ERRORLEVEL!
+    if not !EXITCODE! == 0 (
+        echo ERROR running %%~nxf
+        pause
+        exit /b !EXITCODE!
+    )
+)
+
+echo Views...
+for %%f in ("%BASEDIR%Scripts\Schema\Views\*.sql") do (
     echo Running %%~nxf...
     psql -h %PGHOST% -p %PGPORT% -U %PGUSER% -d %PGDATABASE% -v ON_ERROR_STOP=1 -f "%%f"
     set EXITCODE=!ERRORLEVEL!

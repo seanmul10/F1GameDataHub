@@ -175,7 +175,7 @@ namespace F1Packets.F125
                     EventStringCodes.OvertakeEventCode => _eventDetails.Overtake,
                     EventStringCodes.SafetyCarEventCode => _eventDetails.SafetyCar,
                     EventStringCodes.CollisionEventCode => _eventDetails.Collision,
-                    _ => throw new InvalidOperationException($"Unknown event string code: {eventStringCode}")
+                    _ => _eventDetails.FastestLap, // delete
                 };
             }
         }
