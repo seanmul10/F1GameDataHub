@@ -1,12 +1,54 @@
 ﻿using Npgsql;
 
-// Connection string to your TimescaleDB/PostgreSQL instance
-var connString = "Host=localhost;Port=5432;Username=postgres;Password=postgres;Database=postgres";
+var connString =
+    Environment.GetEnvironmentVariable("F1_DB_CONNECTION_STRING")
+    ?? "Host=localhost;Port=5432;Username=postgres;Password=postgres;Database=postgres";
 
 await using var conn = new NpgsqlConnection(connString);
 await conn.OpenAsync();
 
-var sqlFiles = Directory.GetFiles("SchemaFiles", "*.sql");
+var bootstrapProjectPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
+var schemaFilesPath = Path.Combine(bootstrapProjectPath, "SchemaFiles");
+var scriptsSchemaPath = Path.GetFullPath(Path.Combine(bootstrapProjectPath, "..", "..", "Scripts", "Schema"));
+
+var sqlFiles = new List<string>();
+
+if (Directory.Exists(schemaFilesPath))
+{
+    var bootstrapOrder = new[]
+    {
+        "CreateSessionTable.sql",      // Creates session_metadata
+        "CreateParticipantsTable.sql", // Depends on session_metadata
+        "CreateTelemetryTable.sql"     // Creates car_telemetry
+    };
+
+    foreach (var fileName in bootstrapOrder)
+    {
+        var fullPath = Path.Combine(schemaFilesPath, fileName);
+        if (!File.Exists(fullPath))
+        {
+            throw new FileNotFoundException($"Expected schema file not found: {fullPath}");
+        }
+
+        sqlFiles.Add(fullPath);
+    }
+}
+
+if (Directory.Exists(scriptsSchemaPath))
+{
+    sqlFiles.AddRange(
+        Directory.GetFiles(scriptsSchemaPath, "*.sql", SearchOption.AllDirectories)
+            .Where(file => !file.Contains($"{Path.DirectorySeparatorChar}Views{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase))
+            .OrderBy(file => file)
+    );
+}
+
+if (sqlFiles.Count == 0)
+{
+    throw new DirectoryNotFoundException(
+        $"No schema files found. Checked: {schemaFilesPath} and {scriptsSchemaPath}"
+    );
+}
 
 foreach (var file in sqlFiles)
 {

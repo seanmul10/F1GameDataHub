@@ -18,6 +18,13 @@ namespace OvertakeTest
     public class TestListener(IPacketReceiver packetReceiver)
     {
         private readonly Channel<TelemetrySample> _telemetryChannel = Channel.CreateUnbounded<TelemetrySample>();
+        private readonly string _connectionString =
+            Environment.GetEnvironmentVariable("F1_DB_CONNECTION_STRING")
+            ?? "Host=localhost;Port=5432;Username=postgres;Password=postgres;Database=postgres";
+        private readonly bool _dbEnabled = !string.Equals(
+            Environment.GetEnvironmentVariable("F1_DISABLE_DB"),
+            "true",
+            StringComparison.OrdinalIgnoreCase);
 
         private readonly Guid _appContextId = Guid.NewGuid(); // Unique identifier for the application context
 
@@ -39,10 +46,16 @@ namespace OvertakeTest
         /// <returns>A task representing the asynchronous recording operation.</returns>
         public async Task StartRecording(CancellationToken cancellationToken)
         {
-            var connString = "Host=localhost;Port=5432;Username=postgres;Password=postgres;Database=postgres";
-
-            await using var conn = new NpgsqlConnection(connString);
-            await conn.OpenAsync(cancellationToken);
+            await using var conn = _dbEnabled ? new NpgsqlConnection(_connectionString) : null;
+            if (conn is not null)
+            {
+                await conn.OpenAsync(cancellationToken);
+                Console.WriteLine("Database writes are enabled.");
+            }
+            else
+            {
+                Console.WriteLine("Database writes are disabled. Running parser-only ingestion mode.");
+            }
 
             var teamService = new LookupService<LookupItem>("team-ids.json");
             var nationService = new LookupService<LookupItem>("nation-ids.json");
@@ -74,19 +87,28 @@ namespace OvertakeTest
                 {
                     case F1PacketId.Session:
                         var sessionPacket = Utils.ReadFromBytes<PacketSessionData>(udpResult.Buffer);
-                        await WriteSessionMetadata(conn, sessionPacket);
-                        await WriteSessionState(conn, sessionPacket);
+                        if (conn is not null)
+                        {
+                            await WriteSessionMetadata(conn, sessionPacket);
+                            await WriteSessionState(conn, sessionPacket);
+                        }
                         break;
                     case F1PacketId.Participants:
                         if (header.PacketFormat == PacketFormats.F126)
                         {
                             var participantsPacket = Utils.ReadFromBytes<F126.PacketParticipantsData>(udpResult.Buffer);
-                            await WriteParticipants(conn, participantsPacket);
+                            if (conn is not null)
+                            {
+                                await WriteParticipants(conn, participantsPacket);
+                            }
                         }
                         else if (header.PacketFormat == PacketFormats.F125)
                         {
                             var participantsPacket = Utils.ReadFromBytes<PacketParticipantsData>(udpResult.Buffer);
-                            await WriteParticipants(conn, participantsPacket);
+                            if (conn is not null)
+                            {
+                                await WriteParticipants(conn, participantsPacket);
+                            }
                         }
                         else
                         {
@@ -166,10 +188,13 @@ namespace OvertakeTest
         async Task WriteBatchToDbAsync(List<TelemetrySample> batch, CancellationToken token)
         {
             if (batch.Count == 0) return;
+            if (!_dbEnabled)
+            {
+                Console.WriteLine($"Parsed telemetry rows: {batch.Count} (DB disabled)");
+                return;
+            }
 
-            var connString = "Host=localhost;Port=5432;Username=postgres;Password=postgres;Database=postgres";
-
-            await using var conn = new NpgsqlConnection(connString);
+            await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync(token);
 
             var sb = new StringBuilder();
@@ -211,7 +236,8 @@ namespace OvertakeTest
             await using var cmd = new NpgsqlCommand(sb.ToString(), conn);
             cmd.Parameters.AddRange(parameters.ToArray());
 
-            var x = await cmd.ExecuteNonQueryAsync(token);
+            var insertedRows = await cmd.ExecuteNonQueryAsync(token);
+            Console.WriteLine($"Ingested telemetry rows: {insertedRows} (batch size: {batch.Count})");
         }
 
         private async Task WriteSessionMetadata(NpgsqlConnection conn, PacketSessionData packet)

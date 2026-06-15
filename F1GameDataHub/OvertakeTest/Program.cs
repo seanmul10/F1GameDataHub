@@ -4,7 +4,11 @@ using PacketRecording;
 using System.Net;
 using System.Net.Sockets;
 
-var udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, 20777));
+var udpPortRaw = Environment.GetEnvironmentVariable("F1_UDP_PORT");
+var udpPort = int.TryParse(udpPortRaw, out var parsedUdpPort) ? parsedUdpPort : 20777;
+
+Console.WriteLine($"Listening for UDP telemetry on port {udpPort}...");
+var udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, udpPort));
 var packetReceiver = new UdpClientReceiver(udpClient);
 
 var recorder = new TestListener(packetReceiver);

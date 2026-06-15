@@ -11,4 +11,9 @@
     
     PRIMARY KEY (session_uid, frame_id, driver_index)
 );
-SELECT create_hypertable('car_telemetry', 'frame_id');
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'create_hypertable') THEN
+        PERFORM create_hypertable('car_telemetry', 'frame_id', if_not_exists => TRUE);
+    END IF;
+END $$;
