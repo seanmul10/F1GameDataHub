@@ -1,4 +1,4 @@
 CREATE TABLE IF NOT EXISTS Teams (
     id INTEGER PRIMARY KEY,
-    type TEXT NOT NULL
+    name TEXT NOT NULL
 );

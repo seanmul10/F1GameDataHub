@@ -1,0 +1,72 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "F1 GameDataHub";
+}
+
+<h1>F1 GameDataHub Control Panel</h1>
+
+@if (!string.IsNullOrWhiteSpace(Model.ActionMessage))
+{
+    <p><strong>@Model.ActionMessage</strong></p>
+}
+
+<section>
+    <h2>Saved Sessions</h2>
+    <form method="post" asp-page-handler="SelectSession">
+        <label asp-for="SelectedSessionUid">Session</label>
+        <select asp-for="SelectedSessionUid" asp-items="Model.SessionOptions">
+            <option value="">-- Select a session --</option>
+        </select>
+        <button type="submit">Load summary</button>
+    </form>
+
+    @if (Model.SelectedSession is not null)
+    {
+        <div style="margin-top: 1rem;">
+            <p><strong>Track:</strong> @Model.SelectedSession.TrackLabel</p>
+            <p><strong>Date:</strong> @Model.SelectedSession.SessionStartTimeUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</p>
+            <p><strong>Session Type:</strong> @Model.SelectedSession.SessionType</p>
+        </div>
+    }
+</section>
+
+<hr />
+
+<section>
+    <h2>Import .gz Dump</h2>
+    <p><strong>Status:</strong> @Model.ImportStatus.State - @Model.ImportStatus.Message (@Model.ImportStatus.UpdatedAtUtc.ToLocalTime().ToString("HH:mm:ss"))</p>
+    <form method="post" asp-page-handler="StartImport">
+        <input type="hidden" asp-for="SelectedSessionUid" />
+        <label asp-for="DumpPath">Dump path</label>
+        <input asp-for="DumpPath" style="min-width: 30rem;" />
+        <label asp-for="ResetBeforeImport" style="margin-left: 0.5rem;">
+            <input asp-for="ResetBeforeImport" /> Reset replay tables first
+        </label>
+        <button type="submit">Start import</button>
+    </form>
+</section>
+
+<hr />
+
+<section>
+    <h2>Live Listener</h2>
+    <p><strong>Status:</strong> @Model.ListenerStatus.State - @Model.ListenerStatus.Message (@Model.ListenerStatus.UpdatedAtUtc.ToLocalTime().ToString("HH:mm:ss"))</p>
+    <p><strong>Packet rate (last ~5s):</strong> @(Model.ListenerStatus.PacketRateHz?.ToString("0.0") ?? "0.0") Hz</p>
+    <p><strong>Total packets received:</strong> @(Model.ListenerStatus.TotalPackets?.ToString() ?? "0")</p>
+    <form method="post" asp-page-handler="StartListener" style="display:inline-block;">
+        <input type="hidden" asp-for="SelectedSessionUid" />
+        <button type="submit">Start listening</button>
+    </form>
+    <form method="post" asp-page-handler="StopListener" style="display:inline-block; margin-left: 0.5rem;">
+        <input type="hidden" asp-for="SelectedSessionUid" />
+        <button type="submit">Stop listening</button>
+    </form>
+</section>
+
+@if (Model.ListenerStatus.State == F1GameDataHub.Web.Services.JobRunState.Running)
+{
+    <script>
+        setTimeout(function () { window.location.reload(); }, 5000);
+    </script>
+}
