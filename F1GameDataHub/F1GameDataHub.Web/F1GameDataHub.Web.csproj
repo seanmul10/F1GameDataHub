@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\F1Packets\F1Packets.csproj" />
+    <ProjectReference Include="..\F1.Common\F1.Common.csproj" />
+    <ProjectReference Include="..\PacketRecording\PacketRecording.csproj" />
+    <ProjectReference Include="..\OvertakeTest\OvertakeTest.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="9.0.3" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>

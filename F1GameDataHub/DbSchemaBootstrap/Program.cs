@@ -9,7 +9,10 @@ await conn.OpenAsync();
 
 var bootstrapProjectPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
 var schemaFilesPath = Path.Combine(bootstrapProjectPath, "SchemaFiles");
-var scriptsSchemaPath = Path.GetFullPath(Path.Combine(bootstrapProjectPath, "..", "..", "Scripts", "Schema"));
+var scriptsPath = Path.GetFullPath(Path.Combine(bootstrapProjectPath, "..", "..", "Scripts"));
+var schemaTablesPath = Path.Combine(scriptsPath, "Schema", "Tables");
+var staticDataPath = Path.Combine(scriptsPath, "StaticData");
+var schemaViewsPath = Path.Combine(scriptsPath, "Schema", "Views");
 
 var sqlFiles = new List<string>();
 
@@ -34,19 +37,29 @@ if (Directory.Exists(schemaFilesPath))
     }
 }
 
-if (Directory.Exists(scriptsSchemaPath))
+if (!Directory.Exists(schemaTablesPath))
 {
-    sqlFiles.AddRange(
-        Directory.GetFiles(scriptsSchemaPath, "*.sql", SearchOption.AllDirectories)
-            .Where(file => !file.Contains($"{Path.DirectorySeparatorChar}Views{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase))
-            .OrderBy(file => file)
-    );
+    throw new DirectoryNotFoundException($"Schema tables directory not found at: {schemaTablesPath}");
 }
+
+if (!Directory.Exists(staticDataPath))
+{
+    throw new DirectoryNotFoundException($"Static data directory not found at: {staticDataPath}");
+}
+
+if (!Directory.Exists(schemaViewsPath))
+{
+    throw new DirectoryNotFoundException($"Schema views directory not found at: {schemaViewsPath}");
+}
+
+sqlFiles.AddRange(Directory.GetFiles(schemaTablesPath, "*.sql").OrderBy(file => file));
+sqlFiles.AddRange(Directory.GetFiles(staticDataPath, "*.sql").OrderBy(file => file));
+sqlFiles.AddRange(Directory.GetFiles(schemaViewsPath, "*.sql").OrderBy(file => file));
 
 if (sqlFiles.Count == 0)
 {
     throw new DirectoryNotFoundException(
-        $"No schema files found. Checked: {schemaFilesPath} and {scriptsSchemaPath}"
+        $"No schema files found. Checked: {schemaFilesPath}, {schemaTablesPath}, {staticDataPath}, and {schemaViewsPath}"
     );
 }
 
